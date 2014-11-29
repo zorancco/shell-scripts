@@ -10,16 +10,27 @@ for element in "${files[@]}"
 do
         echo ''
         echo "-------> Resolving: $element <--------"
-        echo "type r to revert or press any other key to skip:"
+        echo "type r to revert (ours) | k to keep changes (theirs)| or press any other key to skip:"
+        
         read ACTION
-        if [[ "r" = $ACTION ]]; then
+        if [[ "r" = $ACTION ]];
+        then
                 path="$workingdir/$element"
                 #echo "git reset HEAD $path"
                 git reset HEAD $path
                 git checkout -- $path
                 echo ""
                 echo "Conflict resolved using mine for $element"
-        else 
+        elif [[ "k" = $ACTION ]];
+        then
+                path="$workingdir/$element"
+                #echo "git reset HEAD $path"
+                sudo -u www-data git reset HEAD $path
+                sudo -u www-data git checkout --theirs $path
+                echo ""
+                echo "Conflict resolved using theirs for $element"
+        else
+
                echo "$element was skipped. Run git mergetool to resolve manually"
         fi
 done
